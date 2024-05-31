@@ -2,34 +2,45 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import axios from 'axios';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const [file, setFile] = useState("");
+
+  const handelSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const fileData = new FormData();
+      fileData.append("file", file);
+
+      const responseData = await axios.post({
+        method: "post",
+        url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        data: fileData,
+        headers: {
+          pinata_api_key: import.meta.env.VITE_PINATA_API_KEY,
+          pinata_secret_api_key: import.meta.env.VITE_PINATA_SECRET_KEY,
+          "Content-Type": "multipart/form-data",
+        }, 
+      });
+      const fileUrl = "https://gateway.pinata.cloud/ipfs/"+ responseData.data.IpfsHash;
+      console.log(fileUrl);
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <h1>IPFS Test - Upload your file</h1>
+      <form>
+        <input type="file" onChange={(e)=>setFile(e.target.files[0])} />
+        <button type="Submit" onClick={handelSubmit}>Upload</button>
+      </form>
+    </div>
+  );
 }
 
 export default App
