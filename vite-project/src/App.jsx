@@ -7,6 +7,7 @@ import axios from 'axios';
 function App() {
   const [count, setCount] = useState(0);
   const [file, setFile] = useState("");
+  const [fileUrl, setFileUrl] = useState("");
 
   const handelSubmit = async (e) => {
     e.preventDefault();
@@ -27,6 +28,7 @@ function App() {
       });
       const fileUrl = "https://gateway.pinata.cloud/ipfs/"+ responseData.data.IpfsHash;
       console.log(fileUrl);
+      setFileUrl(fileUrl);
     } catch (err) {
       console.log(err);
     }
@@ -39,6 +41,11 @@ function App() {
         <input type="file" onChange={(e)=>setFile(e.target.files[0])} />
         <button type="Submit" onClick={handelSubmit}>Upload</button>
       </form>
+      {
+        fileUrl && (
+          <a href={fileUrl} target="_blank">{fileUrl}</a>
+        )
+      }
     </div>
   );
 }
