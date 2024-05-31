@@ -15,7 +15,7 @@ function App() {
       const fileData = new FormData();
       fileData.append("file", file);
 
-      const responseData = await axios.post({
+      const responseData = await axios({
         method: "post",
         url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
         data: fileData,
